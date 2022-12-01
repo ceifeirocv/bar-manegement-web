@@ -1,51 +1,56 @@
-import React, {Component} from "react";
+import React, {useState} from "react";
 import SelectList from "./SelectList";
 // import axiosInstance from "../services/axios";
 
-class AddProduct extends Component {
+const AddProduct = ({addProduct}) => {
 
-  state = {
-    name: '',
-    category: '',
-    price: ''
-  }
+
+  const [name, setName] =  useState("");
+  const [category_id, setCategory_id] =  useState("");
+  const [price, setPrice] =  useState("");
   
-  handleChange = (e) => {
-    this.setState({
-      [e.target.id]:e.target.value
-    })
+  
+  const handleChange = (e) => {
+    if (e.target.id === 'name') {
+      setName(e.target.value)
+    } else if (e.target.id === 'category_id') {
+      setCategory_id(e.target.value)     
+    } else if (e.target.id === 'price') {
+      setPrice(e.target.value)
+    }
   }
-  handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    this.props.addProduct(this.state);
-    this.setState(
-      {
-        name: '',
-        category: '',
-        price: '',
-      }
-    )
+    addProduct({name, category_id, price});
+    setName("")
+    setCategory_id("")
+    setPrice("")
   }
-  render(){
-    return(
-      <div className="container">
-        <form onSubmit={this.handleSubmit}>
+  return(
+    <div className="container row justify-content-end">
+      <p className="row justify-content-end">
+        <button className="btn btn-primary col-md-auto" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAddProduct" aria-expanded="false" aria-controls="collapseAddProduct">
+          Add Product
+        </button>
+      </p>
+      <div className="collapse col-6" id="collapseAddProduct" >
+        <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="form-label" htmlFor="name">Name</label>
-            <input className="form-control" type="text" name="name" id="name" value={this.state.name} required onChange={this.handleChange}/>
+            <input className="form-control" type="text" name="name" id="name" value={name} required onChange={handleChange}/>
           </div>
           <div className="mb-3">
-            <SelectList/>
+            <SelectList handleChange={handleChange}/>
           </div>
           <div className="mb-3">
             <label className="form-label" htmlFor="price">Price</label>
-            <input className="form-control" type="text" name="price" id="price" value={this.state.price} required onChange={this.handleChange}/>
+            <input className="form-control" type="text" name="price" id="price" value={price} required onChange={handleChange}/>
             </div>
           <button type="submit" className="btn btn-primary">Add Product</button>
         </form>
       </div>
-    )
-  }
+    </div>
+  )
 }
 
 export default AddProduct

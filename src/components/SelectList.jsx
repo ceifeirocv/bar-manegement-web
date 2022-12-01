@@ -21,8 +21,8 @@ class SelectList extends Component {
     return(
       this.state.categories.length ? (
         <div>
-          <label className="form-label" htmlFor="category">Category</label>
-          <select defaultValue="0" className="form-select" aria-label="Select Categories" id = "category">
+          <label className="form-label" htmlFor="category_id">Category</label>
+          <select defaultValue="0" className="form-select" aria-label="Select Categories" id = "category_id" onChange={this.props.handleChange}>
             <option value="0" disabled>Select Category</option>
             {this.state.categories.map((category) => {
               return <option value={category.id} key = {category.id}>{category.name.toUpperCase()}</option>

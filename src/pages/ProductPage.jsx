@@ -1,46 +1,54 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import Products from "../components/Products";
 import AddProduct from "../components/AddProduct";
 import axios from "../services/axios";
 
-class ProductPage extends Component {
-  state = {
-    products: [ ]
-  }
+const ProductPage = () => {
+  const [products, setProducts] = useState([])
   
-  componentDidMount(){
+  // componentDidMount(){
+  //   this.updateProducs()
+  // }
+  useEffect(() => {
+    updateProducs()
+  });
+
+  const updateProducs = () => {
     axios.get('/products')
     .then(res => {
-      this.setState({
-        products: res.data
-      })
-    })
-  }
-  deleteProduct = (id) => {
-    const products = this.state.products.filter(product => {
-      return product.id !== id
-    })
-    this.setState({
-      products
-    })
-  }
-  addProduct = (product) => {
-    product.id = this.state.products.length ? this.state.products[this.state.products.length-1].id + 1 : 1
-    let products = [...this.state.products, product]
-    this.setState({
-      products
+      setProducts(res.data)
+    }).catch((error) => {
+      console.log(error);
     })
   }
 
-  render(){
-    return (
-      <div>
-      <h1 className="text-primary text-center">Products</h1>
-         <Products products={this.state.products} deleteProduct={this.deleteProduct}/>
-         <AddProduct addProduct={this.addProduct}/>
-      </div>  
-    )
+  const deleteProduct = (id) => {
+    axios.delete(`/products/${id}`)
+    .then(res => {
+      console.log(res.data);
+      updateProducs()
+    }).catch((error) => {
+      console.log(error);
+    })
   }
+
+  const addProduct = (product) => {
+    axios.post('/products', {...product})
+    .then(res => {
+      console.log(res.data);
+      updateProducs()
+    }).catch((error) => {
+      console.log(error);
+    })
+  }
+
+  return (
+    <div>
+    <h1 className="text-primary text-center">Products</h1>
+        <Products products={products} deleteProduct={deleteProduct}/>
+        <AddProduct addProduct={addProduct}/>
+    </div>  
+  )
 }
 
 export default ProductPage;
