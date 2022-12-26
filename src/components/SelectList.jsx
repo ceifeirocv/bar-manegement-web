@@ -1,39 +1,35 @@
-import { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import axiosInstance from '../services/axios'
   
-class SelectList extends Component {
-  state = {
-    categories: []
-  }
+const SelectList = ({handleChange}) => {
+  const [categories, setCategories] = useState([])
 
-  componentDidMount(){
+  useEffect(() => {
     axiosInstance.get('/categories')
     .then(res => {
-      this.setState({
-        categories: res.data
-      })
+      setCategories(res.data)
     })
-  }
+  }, [])
 
   
 
-  render(){
     return(
-      this.state.categories.length ? (
-        <div>
-          <label className="form-label" htmlFor="category_id">Category</label>
-          <select defaultValue="0" className="form-select" aria-label="Select Categories" id = "category_id" onChange={this.props.handleChange}>
-            <option value="0" disabled>Select Category</option>
-            {this.state.categories.map((category) => {
-              return <option value={category.id} key = {category.id}>{category.name.toUpperCase()}</option>
-            })}
+      <div>
+        <label className="form-label" htmlFor="category_id">Category</label>
+        <select className="form-select" aria-label="Select Categories"  defaultValue={'DEFAULT'}
+          id = "category_id" onChange={handleChange} required>
+          <option disabled value={'DEFAULT'}>Select Category</option>
+            {categories.length ? (
+              categories.map((category) => {
+                return <option value={category.id} key = {category.id}>{category.name.toUpperCase()}</option>
+              })
+              ) : (
+                <option disabled>You have no products category</option>
+              )
+            }
           </select>
         </div>
-      ) : (
-        <p className="text-center">You have no products categorie</p>
-      )
     )
-  }
 }
 
 export default SelectList

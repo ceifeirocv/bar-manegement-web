@@ -1,14 +1,18 @@
 import React, {useState} from "react";
+import { useDispatch } from "react-redux";
 import SelectList from "./SelectList";
+import { addProduct, getProducts } from "../slice/productSlice";
 // import axiosInstance from "../services/axios";
 
-const AddProduct = ({addProduct}) => {
+const AddProduct = () => {
 
 
   const [name, setName] =  useState("");
   const [category_id, setCategory_id] =  useState("");
   const [price, setPrice] =  useState("");
-  
+  const [addProductStatus, setAddProductStatus] = useState("idle")
+
+  const dispatch = useDispatch()  
   
   const handleChange = (e) => {
     if (e.target.id === 'name') {
@@ -19,12 +23,23 @@ const AddProduct = ({addProduct}) => {
       setPrice(e.target.value)
     }
   }
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    addProduct({name, category_id, price});
-    setName("")
-    setCategory_id("")
-    setPrice("")
+    if ([name, category_id, price].every(Boolean) && addProductStatus === "idle"){
+      try {
+        setAddProductStatus("pending")
+        await dispatch(addProduct({name, category_id, price}));
+        setName("")
+        setCategory_id("")
+        setPrice("")
+        dispatch(getProducts())
+        
+      } catch (error) {
+        console.log(error);
+      }finally{
+        setAddProductStatus('idle')
+      }
+    } 
   }
   return(
     <div className="container row justify-content-end">
@@ -33,7 +48,7 @@ const AddProduct = ({addProduct}) => {
           Add Product
         </button>
       </p>
-      <div className="collapse col-6" id="collapseAddProduct" >
+      <div className="collapse col-md-auto" id="collapseAddProduct" >
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="form-label" htmlFor="name">Name</label>
@@ -46,7 +61,7 @@ const AddProduct = ({addProduct}) => {
             <label className="form-label" htmlFor="price">Price</label>
             <input className="form-control" type="text" name="price" id="price" value={price} required onChange={handleChange}/>
             </div>
-          <button type="submit" className="btn btn-primary">Add Product</button>
+          <button type="submit" className="btn btn-primary" disabled={addProductStatus==='idle'? false:true}>Add Product</button>
         </form>
       </div>
     </div>
