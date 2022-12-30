@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../services/axios";
+import { logout } from "./authSlice";
 
 const initialState =  {
   products:[],
@@ -32,8 +33,8 @@ export const productsSlice = createSlice({
       }
     }
   },
-  // extraReducers(builder){
-  //   builder
+  extraReducers(builder){
+    builder
   //     .addCase(getProducts.pending, (state, action) => {
   //       state.status = 'loading'
   //     })
@@ -41,11 +42,11 @@ export const productsSlice = createSlice({
   //       state.status = 'succeeded'
   //       state.products = action.payload
   //     })
-  //     .addCase(getProducts.rejected, (state, action) => {
-  //       state.status = 'failed'
-  //       state.error = action.error.message
-  //       console.log('ERROr', action.error);
-  //     })
+      .addCase(getProducts.rejected, (state, action) => {
+        state.status = 'failed'
+        state.error = action.error.message
+        console.log('ERROr', action.error);
+      })
   //     .addCase(deleteProduct.rejected, (state, action) => {
   //       state.status = 'failed'
   //       state.error = action.error.message
@@ -55,7 +56,7 @@ export const productsSlice = createSlice({
   //       console.log(action);
         
   //     })
-  // }
+  }
 })
 
 export const {loading, errorMessage, success, setProducts} = productsSlice.actions
@@ -69,7 +70,9 @@ export const getProducts = createAsyncThunk ('products/getProducts',
     } catch (error) {
       // const {status, statusText} = error.response
       console.log(error.response);
-      dispatch(errorMessage(error.response.data))      
+      dispatch(errorMessage(error.response.data))
+      dispatch(errorMessage(error.response.data))
+      error.response.data.message === 'token invalid' && dispatch(logout())      
     }
   }
 )

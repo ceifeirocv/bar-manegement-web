@@ -68,7 +68,7 @@ const Products = () => {
     </table>
   }
   else if (productStatus === 'failed') {
-    productsList = <div className="alert alert-danger" role="alert">{error.error}</div>
+    productsList = <div className="alert alert-danger" role="alert">{error.error || error.message}</div>
   }
   return (
       productsList

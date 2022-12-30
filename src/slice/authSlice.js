@@ -34,6 +34,10 @@ export const authSlice = createSlice ({
       const AUTH_TOKEN = `Bearer ${action.payload.token}`
       axiosInstance.defaults.headers.common['Authorization'] = AUTH_TOKEN;
       state.user = action.payload
+    },
+    logout: (state) => {
+      state.user = null
+      localStorage.removeItem('user')
     }
   },
   // extraReducers(builder){
@@ -55,7 +59,7 @@ export const authSlice = createSlice ({
   // }
 })
 
-export const {setUser, loading, errorMessage, success} = authSlice.actions
+export const {setUser, loading, errorMessage, success, logout} = authSlice.actions
 
 export const createSession = createAsyncThunk ('auth/createSession', async (credentials, {dispatch}) => {
   console.log(credentials);
@@ -65,7 +69,7 @@ export const createSession = createAsyncThunk ('auth/createSession', async (cred
     dispatch(success(response.data))
   } catch (error) {
     console.log(error.response);
-    dispatch(errorMessage(error.response.data))    
+    
   }
 })
 
